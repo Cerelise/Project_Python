@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>租房</title>
+  <script src="../static/echarts.js"></script>
+  <script src="../static/jquery-3.5.1.min.js"></script>
+  <style>
+        html{
+            background:url('../static/1141313.jpg')
+        }
+        #title{
+            position:absolute;
+            width:100%;
+            height:7%;
+            top:0;
+            left:0;
+            text-align:center;
+
+        }
+        #l1{
+            position:absolute;
+            width:33%;
+            height:40%;
+            top:8%;
+            left:0;
+
+        }
+        #l2{
+            position:absolute;
+            width:33%;
+            height:48%;
+            top:49%;
+            left:0;
+
+        }
+        #c1{
+            position:absolute;
+            width:32%;
+            height:35%;
+            top:8%;
+            left:34%;
+
+        }
+        #c2{
+            position:absolute;
+            width:32%;
+            height:55%;
+            top:44%;
+            left:34%;
+
+        }
+        #r1{
+            position:absolute;
+            width:33%;
+            height:40%;
+            top:8%;
+            right:0;
+
+        }
+        #r2{
+            position:absolute;
+            width:33%;
+            height:48%;
+            top:49%;
+            right:0;
+
+        }
+
+  </style>
+</head>
+<body>
+<div id="title"><h1>北上广深租房图鉴</h1></div>
+<div id="l1"></div>
+<div id="l2"></div>
+<div id="c1"></div>
+<div id="c2"></div>
+<div id="r1"></div>
+<div id="r2"></div>
+<script>
+    var get_l1 = echarts.init(document.querySelector('#l1'),'dark');
+    var get_l2 = echarts.init(document.querySelector('#l2'),'dark');
+    var get_c1 = echarts.init(document.querySelector('#c1'),'dark');
+    var get_c2 = echarts.init(document.querySelector('#c2'),'light');
+    var get_r1 = echarts.init(document.querySelector('#r1'),'dark');
+    var get_r2 = echarts.init(document.querySelector('#r2'),'dark');
+
+
+    function get_l1_data(){
+      $.ajax({
+        url:'/taitan',
+        type:'post',
+        async:true,
+        success:function(data){
+          get_l1.setOption({
+            title:{text:'存活占比',left:'center',},
+            legend:{bottom:10,left:'center',data:['存活','遇难']},
+            tooltip:{trigger:'item'},
+            series:[
+              {
+                type:'pie',
+                radius:'65%',
+                center:['50%','50%'],
+                selectedMode:'single',
+                data:[
+                  {name:'遇难',value:data.sur_num[0]},
+                  {name:'存活',value:data.sur_num[1]},
+                ],
+                itemStyle:{
+                  normal:{
+                    label:{
+                      show:true,
+                      formatter:'{b}:{c} ({d}%)'
+                    },
+                    labelLine:{show:true}
+                  }
+                },
+                emphasis:{
+                  itemStyle:{
+                    shadowBlur:10,
+                    shadowOffsetX:0,
+                    shadowColor:'rgba(0,0,0,0.5)'
+                  }
+                }
+              }
+            ]
+          })
+        }
+      })
+    }
+
+    function get_l2_data(){
+      $.ajax({
+        url:'taitan',
+        type:'post',
+        async:true,
+        success:function(data){
+          get_l2.setOption({
+            backgroundColor:'#0f375f',
+            title:{text:'不同性别存活分布',left:'center',top:20},
+            grid:{left:'3%',right:'4%',bottom:'4%',containLabel:true},
+            tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+            legend:{data:['遇难','存活'],textStyle:{color:'#ccc'}},
+            xAxis:{type:'category',data:['male','female'],axisLine:{lineStyle:{color:'#ccc'}}},
+            yAxis:{type:'value',splitLine:{show:false},axisLine:{lineStyle:{color:'#ccc'}}},
+            series:[
+              {stack:'test',name:'存活',type:'bar',smooth:true,showAllSymbol:true,symbol:'emptyCircle',symbolSize:15,data:data.sex_male,label:{normal:{show:true,position:'insideRight'}}},
+              {name:'遇难',stack:'test',type:'bar',data:data.sex_female,label:{normal:{show:true,position:'insideRight',}}}
+             ]
+          })
+        }
+      })
+    }
+
+
+    function get_r1_data(){
+      $.ajax({
+        url:'/taitan',
+        type:'post',
+        async:true,
+        success:function(data){
+          get_r1.setOption({
+            title:{text:'不同年龄存活分布',left:'center',top:20},
+            tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+            legend:{data:['存活','遇难'],textStyle:{color:'#ccc'}},
+            xAxis:{type:'category',data:data.index_,axisLine:{lneStyle:{color:'#ccc'}}},
+            yAxis:{splitLine:{show:false},axisLine:{lineStyle:{color:'#ccc'}}},
+            series:[{
+              name:'遇难',
+              type:'bar',
+              smooth:true,
+              stack:'test',
+              showAllSymbol:true,
+              symbol:'emptyCircle',
+              symbolSize:30,
+              data:data.death,
+              itemStyle:{normal:{label:{show:true}}}
+            },{
+              name:'存活',
+              type:'bar',
+              barWidth:20,
+              stack:'test',
+              data:data.survival,
+              itemStyle:{normal:{label:{show:true}}}
+            }]
+          })
+        }
+      })
+    }
+
+    function get_r2_data(){
+      $.ajax({
+        url:'/taitan',
+        type:'post',
+        async:true,
+        success:function(data){
+          get_r2.setOption({
+            title:{text:'不同舱位存活占比',left:'center',top:20},
+            tooltip:{trigger:'axis',axisPointer:{color:'#ccc'}},
+            legend:{data:['存活','遇难'],orient:'vertical',x:'right',y:'top'},
+            grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},
+            yAxis:{type:'category',data:data.ticket,},
+            xAxis:{type:'value',boundaryGap:[0,0.01]},
+            series:[{
+              name:'存活',
+              type:'bar',
+              stack:'test',
+              data:data.ticket_cun,
+              itemStyle:{normal:{label:{show:true}}}
+            },{
+              name:'遇难',
+              type:'bar',
+              stack:'test',
+              data:data.ticket_yu,
+              itemStyle:{normal:{label:{show:true}}}
+            }]
+          })
+        }
+      })
+    }
+
+    var titlel = ['Cherbourg港口存活占比','Queenstown港口存活占比','Southampton港口存活占比']
+
+    function get_c2_data(){
+      $.ajax({
+        url:'/taitan',
+        type:'post',
+        async:true,
+        success:function(data){
+          get_c2.setOption({
+            title:[
+              {text:titlel[0],left:'60%',top:'0%'},
+              {text:titlel[1],left:'30%',top:'25%'},
+              {text:titlel[2],top:'59%'},
+            ],
+            backgroundColor:'#f7f7f7',
+            tooltip:{trigger:'item',formatter:'{a}<br/>{b}:{c}({d}%)'},
+            legend:{x:'center',data:['遇难','存活']},
+            calculable:false,
+            series:[{
+              name:'Cherbourg港口存活占比',
+              type:'pie',
+              center:['20%','80%'],
+              radius:[0,80],
+              data:[
+                {value:data.cherbourg[0],name:'遇难'},
+                {value:data.cherbourg[1],name:'存活'},
+              ],
+              itemStyle:{normal:{color:function(params){var colorList=['#339CD1','#FE8463','#FAD860'];return colorList[params.dataIndex]},labelLine:{length:2,show:false},label:{show:true,position:'inner',formatter:function(params){return (params.percent-0).toFixed(0)+'%'},textStyle:{fontSize:14}}}},
+
+            },{
+              name:'Queenstown港口存活占比',
+              type:'pie',
+              center:['50%','50%'],
+              radius:[0,80],
+              data:[
+                {value:data.queenstown[0],name:'遇难'},
+                {value:data.queenstown[1],name:'存活'},
+              ],
+              itemStyle:{normal:{color:function(params){var colorList=['#339CD1','#FE8463','#FAD860'];return colorList[params.dataIndex]},labelLine:{length:2,show:false},label:{show:true,position:'inner',formatter:function(params){return (params.percent-0).toFixed(0)+'%'},textStyle:{fontSize:14}}}},
+            },{
+              name:'Southampton港口存活占比',
+              type:'pie',
+              center:['80%','20%'],
+              radius:[0,80],
+              data:[
+                {value:data.southampton[0],name:'遇难'},
+                {value:data.southampton[1],name:'存活'},
+              ],
+              itemStyle:{normal:{color:function(params){var colorList=['#339CD1','#FE8463','#FAD860'];return colorList[params.dataIndex]},labelLine:{length:2,show:false},label:{show:true,position:'inner',formatter:function(params){return (params.percent-0).toFixed(0)+'%'},textStyle:{fontSize:14}}}},
+            }]
+          })
+        }
+      })
+    }
+
+
+    get_l1_data();
+    get_l2_data();
+    get_r1_data();
+    get_r2_data();
+    get_c2_data();
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../static/echarts.js"></script>
+  <script src="../static/jquery-3.5.1.min.js"></script>
+  <style>
+    #test1{
+      height:800px;
+      width:1000px;
+
+    }
+    #test2{
+      height:800px;
+      width:1000px;
+    }
+    #test3{
+      height:800px;
+      width:1000px;
+    }
+
+  </style>
+</head>
+<body>
+<div id="test1"></div>
+<div id="test2"></div>
+<div id="test3"></div>
+
+<script>
+  var get_t1 = echarts.init(document.querySelector('#test1'),'dark');
+  var get_t2 = echarts.init(document.querySelector('#test2'),'dark');
+  var get_t3 = echarts.init(document.querySelector('#test3'),'dark');
+
+
+  function get_t1_data(){
+    $.ajax({
+      url:'/test',
+      type:'post',
+      async:true,
+      success:function(data){
+        get_t1.setOption({
+          title:{text:'销售情况',subtext:'2017-2018',left:'center',top:20},
+          tooltip:{trigger:'axis'},
+          legend:{data:['SalesIn2017','SalesIn2018','2017cos','2018cos'],orient:'vertical',x:'right',y:'center'},
+          xAxis:{type:'category',data:data.date,name:'month'},
+          yAxis:{type:'value',name:'series'},
+          series:[{
+            name:'SalesIn2017',
+            type:'bar',
+            data:data.sales2017
+          },{
+            name:'SalesIn2018',
+            type:'bar',
+            data:data.sales2018
+          },{
+            name:'2017cos',
+            type:'bar',
+            data:data.cos2017
+          },{
+            name:'2018cos',
+            type:'bar',
+            data:data.cos2018
+          }]
+        })
+      }
+    })
+  }
+
+  function get_t2_data(){
+    $.ajax({
+      url:'/test',
+      type:'post',
+      async:true,
+      success:function(data){
+
+        get_t2.setOption({
+          title:{text:'销售趋势',subtext:'2017-2018',left:'center',top:20},
+          tooltip:{trigger:'axis'},
+          legend:{data:['SalesIn2017','SalesIn2018','2017cos','2018cos'],orient:'vertical',x:'right',y:'top'},
+          xAxis:{type:'category',data:data.date,name:'month'},
+          yAxis:{type:'value',name:'series'},
+          grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},
+          series:[{
+            name:'SalesIn2017',
+            type:'line',
+            data:data.sales2017,
+
+            smooth:true,
+            areaStyle:{},
+          },{
+            name:'SalesIn2018',
+            type:'line',
+            data:data.sales2018,
+
+            smooth:true,
+            areaStyle:{},
+          },{
+            name:'2017cos',
+            type:'line',
+            data:data.cos2017,
+
+            smooth:true,
+            areaStyle:{},
+          },{
+            name:'2018cos',
+            type:'line',
+            data:data.cos2018,
+            color:'',
+            smooth:true,
+            areaStyle:{},
+          }]
+        })
+      }
+    })
+  }
+
+
+  function get_t3_data(){
+    $.ajax({
+      url:'/test',
+      type:'post',
+      async:true,
+      success:function(data){
+        var indicator = [];
+        for (var i =0;i<data.date.length;i++){
+          indicator.push({
+            name:data.date[i],max:2000000
+          })
+        }
+        get_t3.setOption({
+          color: [ '#67F9D8', '#FFE434', '#56A3F1', '#FF917C'],
+          title:{text:'销售对比',subtext:'2017-2018',left:'center'},
+          legend:{orient:'vertical',x:'right',y:'top',data:['SalesIn2017','SalesIn2018','2017cos','2018cos']},
+          tooltip:{trigger:'item'},
+          radar:{
+            indicator:indicator
+          },
+          series:[{
+            name:'SalesIn2017',
+            type:'radar',
+            data:[{
+              value:data.sales2017,
+              data:'SalesIn2017'
+            },],
+
+          },{
+            name:'SalesIn2018',
+            type:'radar',
+            data:[{
+              value:data.sales2018,
+              data:'SalesIn2018'
+            },]
+          },{
+            name:'2017cos',
+            type:'radar',
+            data:[{
+              value:data.cos2017,
+              data:'2017cos'
+            },]
+          },{
+            name:'2018cos',
+            type:'radar',
+            data:[{
+              value:data.cos2018,
+              data:'2018cos'
+            },]
+          },]
+        })
+      }
+    })
+  }
+
+
+  get_t1_data();
+  get_t2_data();
+  get_t3_data();
+</script>
+</body>
+</html>

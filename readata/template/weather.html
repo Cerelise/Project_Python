@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="../static/echarts.js"></script>
+  <script src="../static/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+<div id="main1" style="width:800px;height:600px"></div>
+<div id="main2" style="width:800px;height:600px"></div>
+<div id="main3" style="width:800px;height:600px"></div>
+<div id="main4" style="width:800px;height:600px"></div>
+<div id="main5" style="width:800px;height:600px"></div>
+<script>
+  var main1 = echarts.init(document.querySelector('#main1'));
+  var main2 = echarts.init(document.querySelector('#main2'));
+  var main3 = echarts.init(document.querySelector('#main3'));
+  var main4 = echarts.init(document.querySelector('#main4'));
+  var main5 = echarts.init(document.querySelector('#main5'));
+
+  function my_echarts(){
+    $.ajax({
+      url:'/bike',
+      type:'post',
+      async:true,
+      success:function(data){
+
+        var weather = ['晴天','阴天','小雨/小雪','恶劣天气'];
+        main1.setOption({
+          title:{text:'天气',subtext:'租车人数关系',textStyle:{color:'red',fontWidth:'bolder'},left:'center'},
+          tooltip:{trigger:'axis'},
+          xAxis:{type:'category',name:'天气情况',data:weather},
+          yAxis:{type:'value',name:'平均人数'},
+          series:[{
+            type:'line',
+            data:data.weatherData,
+            label:{show:true},
+            emphasis:{focus:'series'}
+          }]
+        })
+
+
+
+
+        main2.setOption({
+          title:{text:'天气',subtext:'租车人数关系',textStyle:{color:'red',fontWidth:'bolder'},left:'center'},
+          tooltip:{trigger:'axis'},
+
+          xAxis:{type:'category',name:'风速',data:data.windspeedData},
+          yAxis:{type:'value',name:'最大人数'},
+          series:[{
+            type:'line',
+            data:data.windspeedvalue,
+            label:{show:true},
+            emphasis:{focus:'series'}
+          }]
+        })
+
+
+        main3.setOption({
+          title:{text:'温度',subtext:'租车人数关系',textStyle:{color:'red',fontWidth:'bolder'},left:'center'},
+          tooltip:{trigger:'axis'},
+          xAxis:{type:'category',name:'温度',data:data.tempName},
+          yAxis:{type:'value',name:'平均人数'},
+          series:[{
+            type:'line',
+            data:data.tempValue,
+            label:{show:true},
+            emphasis:{focus:'series'}
+
+          }]
+        })
+
+        var test = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+        main4.setOption({
+          title:{text:'月份',subtext:'天气关系',left:'center'},
+          tooltip:{trigger:'axis'},
+          xAxis:{type:'category',name:'月份',data:test},
+          yAxis:{type:'value',name:'天气出现次数'},
+          legend:{data:['晴天','阴天','小雨/小雪'],x:'right',y:'top'},
+          series:[{
+            type:'bar',
+            name:'晴天',
+            data:data.qin,
+
+          },{
+            name:'阴天',
+            type:'bar',
+            data:data.yin,
+
+          },{
+            name:'小雨/小雪',
+            type:'bar',
+            data:data.xue
+          }]
+        })
+
+
+      },
+      error:function(){
+        alert('传入失败');
+      }
+    })
+  }
+
+
+
+  my_echarts();
+</script>
+</body>
+</html>

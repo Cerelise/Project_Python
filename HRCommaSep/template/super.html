@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="../static/echarts.js"></script>
+  <script src="../static/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+<div id="main1" style="width:800px;height:600px;"></div>
+<div id="main2" style="width:1800px;height:900px;"></div>
+<div id="main3" style="width:1300px;height:600px;"></div>
+<div id="main4" style="width:1300px;height:600px;"></div>
+<div id="main5" style="width:800px;height:600px;"></div>
+<div id="main6" style="width:800px;height:600px;"></div>
+<div id="main7" style="width:800px;height:600px;"></div>
+<div id="main8" style="width:800px;height:600px;"></div>
+<div id="main9" style="width:800px;height:600px;"></div>
+
+
+<script>
+  var main1 = echarts.init(document.querySelector('#main1'));
+  var main2 = echarts.init(document.querySelector('#main2'));
+  var main3 = echarts.init(document.querySelector('#main3'));
+  var main4 = echarts.init(document.querySelector('#main4'));
+  var main5 = echarts.init(document.querySelector('#main5'));
+  var main6 = echarts.init(document.querySelector('#main6'));
+  var main7= echarts.init(document.querySelector('#main7'));
+  var main8 = echarts.init(document.querySelector('#main8'));
+  var main9 = echarts.init(document.querySelector('#main9'));
+
+
+  function my_echarts(){
+    $.ajax({
+      url:'/superstore',
+      type:'post',
+      async:true,
+      success:function(data){
+
+      main1.setOption({
+        title:{text:'超市每年业绩',left:'center',},
+        tooltip:{trigger:'axis'},
+        legend:{data:['sales','profit','quantity'],left:'right',orient:'vertical'},
+        xAxis:{name:'年份',type:'category',data:data.year_sale,},
+        yAxis:{name:'营业额',type:'value'},
+        series:[{
+          name:'sales',
+          type:'bar',
+          label:{show:true,position:'top'},
+          data:data.sales
+        },{
+          name:'profit',
+          type:'bar',
+          data:data.profit,
+          label:{show:true,position:'top'}
+        },{
+          name:'quantity',
+          type:'bar',
+          data:data.quantity,
+          label:{show:true,position:'top'}
+        }]
+      })
+
+
+      main2.setOption({
+        title:[
+          {text:'销售额',textStyle:{color:'red',fontWidth:'bolder'},x:'20%',y:'2%'},
+          {text:'利润率',textStyle:{color:'red',fontWidth:'bolder'},x:'50%',y:'2%'},
+          {text:'销量',textStyle:{color:'red',fontWidth:'bolder'},x:'85%',y:'3%'},
+        ],
+        tooltip:{trigger:'axis'},
+        xAxis:[
+          {name:'月份',data:data.month,type:'category',gridIndex:0,position:'bottom'},
+          {name:'月份',data:data.month,type:'category',gridIndex:1,position:'bottom'},
+          {name:'月份',data:data.month,type:'category',gridIndex:2,position:'bottom'}
+        ],
+        yAxis:[
+          {type:'value',name:'销售额',gridIndex:0},
+          {type:'value',name:'利润率',gridIndex:1},
+          {type:'value',name:'销量',gridIndex:2},
+
+         ],
+        legend:{data:['2011','2012','2013','2014'],left:'right'},
+        grid:[
+          {x:'2%',y:'7%',width:'30%',height:'50%'},
+          {x:'35%',y:'7%',width:'30%',height:'50%'},
+          {x:'70%',y:'7%',width:'30%',height:'50%'},
+        ],
+        series:[{
+           name:'2011',
+           type:'line',
+           data:data.sales_11,
+           xAxisIndex:0,
+           yAxisIndex:0,areaStyle: {},stack:'s'
+        },{
+           name:'2012',
+           type:'line',
+           data:data.sales_12,
+           xAxisIndex:0,
+           yAxisIndex:0,areaStyle: {},stack:'s'
+        },{
+           name:'2013',
+           type:'line',
+           data:data.sales_13,
+           xAxisIndex:0,
+           yAxisIndex:0,areaStyle: {},stack:'s'
+        },{
+           name:'2014',
+           type:'line',
+           data:data.sales_14,
+           xAxisIndex:0,
+           yAxisIndex:0,areaStyle: {},stack:'s'
+        },{
+           name:'2011',
+           type:'line',
+           data:data.profit_11,
+           xAxisIndex:1,
+           yAxisIndex:1
+        },{
+           name:'2012',
+           type:'line',
+           data:data.profit_12,
+           xAxisIndex:1,
+           yAxisIndex:1
+        },{
+           name:'2013',
+           type:'line',
+           data:data.profit_13,
+           xAxisIndex:1,
+           yAxisIndex:1
+        },{
+           name:'2014',
+           type:'line',
+           data:data.profit_14,
+           xAxisIndex:1,
+           yAxisIndex:1,
+        },{
+           name:'2011',
+           type:'line',
+           data:data.quantity_11,
+           xAxisIndex:2,areaStyle: {},
+           yAxisIndex:2,stack:'g'
+        },{
+           name:'2012',
+           type:'line',
+           data:data.quantity_12,
+           xAxisIndex:2,
+           yAxisIndex:2,areaStyle: {},stack:'g'
+        },{
+           name:'2013',
+           type:'line',
+           data:data.quantity_13,
+           xAxisIndex:2,
+           yAxisIndex:2,areaStyle: {},stack:'g'
+        },{
+           name:'2014',
+           type:'line',
+           data:data.quantity_14,
+           xAxisIndex:2,
+           yAxisIndex:2,areaStyle: {},stack:'g'
+        }]
+      })
+
+
+      main3.setOption({
+        title:{text:'销售额增长率'},
+        legend:{data:['2012年','2013年','2014年']},
+        yAxis:{type:'value',name:'销售率（%）'},
+        xAxis:{type:'category',name:'月份',data:data.month},
+        tooltip:{trigger:'axis'},
+        series:[{
+          name:'2012年',
+          type:'line',
+          data:data.salary2012,
+        },{
+          name:'2013年',
+          type:'line',
+          data:data.salary2013,
+        },{
+          name:'2014年',
+          type:'line',
+          data:data.salary2014,
+        }]
+      })
+
+      var pieData  = [];
+      for (var i =0;i<data.pro2012.length;i++){
+        pieData.push({value:data.pro2011[i]+data.pro2012[i]+data.pro2013[i]+data.pro2014[i],name:data.proIndex[i]});
+      }
+      main4.setOption({
+        title:[{text:'不同门店利润贡献占比',x:'10%',y:'23%'},{text:'不同门店每年利润及同比增长率',x:'60%',y:'5%'}],
+        tooltip:{trigger:'axis'},
+        legend:{data:['2011年','2012年','2013年','2014年']},
+        grid:[
+
+          {x:'50%',y:'5%',height:'60%',weight:'50%'},
+        ],
+        xAxis:{name:'地区名',type:'category',data:data.proIndex,gridIndex:0},
+        yAxis:{type:'value',gridIndex:0},
+        series:[{
+          name:'2011年',
+          type:'bar',
+          data:data.pro2011,
+          xAxisIndex:0,
+          yAxisIndex:0,
+          label:{show:true,position:'top'}
+        },{
+          name:'2012年',
+          type:'bar',
+          data:data.pro2012,
+          xAxisIndex:0,
+          yAxisIndex:0,
+          label:{show:true,position:'top'}
+        },{
+          name:'2013年',
+          type:'bar',
+          data:data.pro2013,
+          xAxisIndex:0,
+          yAxisIndex:0,
+          label:{show:true,position:'top'}
+        },{
+          name:'2014年',
+          type:'bar',
+          data:data.pro2014,
+          xAxisIndex:0,
+          yAxisIndex:0,
+          label:{show:true,position:'top'}
+        },{
+          type:'pie',
+          data:pieData,
+          radius:'30%',
+          center:['20%','50%'],
+          emphasis:{focus:'data'},
+          label:{formatter:'{b}\n{c}:({d}%)'}
+        }]
+      })
+
+
+
+
+
+      main5.setOption({
+        title:{text:'不同门店销售额贡献占比',left:'center'},
+        tooltip:{trigger:'axis'},
+        legend:{data:['2011年','2012年','2013年','2014年'],left:'right',orient:'vertical'},
+
+        xAxis:{name:'地区名',type:'category',data:data.proIndex},
+        yAxis:{type:'value',},
+        series:[{
+          name:'2012年',
+          type:'bar',
+          data:data.salary2012,
+          xAxisIndex:0,
+          yAxisIndex:0,
+
+        },{
+          name:'2013年',
+          type:'bar',
+          data:data.salary2013,
+          xAxisIndex:0,
+          yAxisIndex:0,
+
+        },{
+          name:'2014年',
+          type:'bar',
+          data:data.salary2014,
+          xAxisIndex:0,
+          yAxisIndex:0,
+
+        }]
+      })
+
+
+      main6.setOption({
+        title:{text:'销售总额、利润率展示',left:'center'},
+        tooltip:{trigger:'axis'},
+        legend:{data:['sales','profit'],left:'right'},
+        xAxis:{name:'折扣',type:'category',data:data.disIndex},
+        yAxis:{name:'销售额',type:'value'},
+        series:[{
+          name:'sales',
+          type:'bar',
+          data:data.disSales,
+          stack:'s'
+        },{
+          name:'profit',
+          type:'bar',
+          data:data.disPro,
+          stack:'s'
+        }]
+      })
+
+
+
+
+
+      main7.setOption({
+        title:{text:'不同产品销售额及利润率对比',left:'center'},
+        tooltip:{trigger:'axis'},
+        legend:{data:['sales','profit'],left:'right'},
+        xAxis:{name:'产品名称',type:'category',data:data.subCat},
+        yAxis:{type:'value'},
+        series:[{
+          name:'sales',
+          type:'bar',
+          data:data.subSales,
+
+        },{
+          name:'profit',
+          type:'bar',
+          data:data.subPro,
+
+        }]
+      })
+
+
+
+      var pData = [];
+      for(var i =0;i<data.segnum.length;i++){
+        pData.push({name:data.segment[i],value:data.segnum[i]});
+      }
+      main8.setOption({
+        title:{text:'不同类型用户占比',left:'center'},
+        tooltip:{trigger:'item'},
+        legend:{bottom:10,left:'center',data:data.segment},
+        series:[{
+          type:'pie',
+          radius:'65%',
+          center:['50%','50%'],
+          label:{formatter:'{b}\n{c}({d}%)'},
+          data:pData,
+          emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }]
+      })
+
+
+      var t = ['Consumer',  'Corporate',  'Home Office'];
+      var t1 = [1049  ,      598    ,      301];
+      var t2 = [1108 ,       632     ,     337];
+      var t3 = [ 1290 ,       778        ,  454];
+      var t4 = [1644    ,    949      ,    645];
+      main9.setOption({
+        title:{text:'2011-2014年不同类别客户销售情况',left:'center'},
+        tooltip:{trigger:'axis'},
+        legend:{data:['2011年','2012年','2013年','2014年'],left:'right',orient:'vertical'},
+        xAxis:{type:'category',name:'用户类别',data:t},
+        yAxis:{type:'value',name:'用户人数'},
+        series:[{
+          name:'2011年',
+          type:'bar',
+          data:t1,
+          stack:'s'
+        },{
+          name:'2012年',
+          type:'bar',
+          data:t2,
+          stack:'s'
+        },{
+          name:'2013年',
+          type:'bar',
+          data:t3,
+          stack:'s'
+        },{
+          name:'2014年',
+          type:'bar',
+          data:t4,
+          stack:'s'
+        }]
+      })
+
+
+      },
+      error:function(){
+        alert('ajax错误');
+      }
+    })
+  }
+
+  my_echarts();
+
+</script>
+</body>
+</html>
+
+
+
+

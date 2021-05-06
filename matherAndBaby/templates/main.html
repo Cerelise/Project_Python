@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../static/echarts.js"></script>
+    <script src="../static/jquery-3.5.1.min.js"></script>
+    <style>
+        html{
+            background:url("../static/1092836.jpg");
+        }
+        #title{
+            position: absolute;
+            width: 50%;
+            height: 10%;
+            top: 0;
+            left: 25%;
+            {#background-color: aqua;#}
+            text-align: center;
+        }
+        #time{
+            position: absolute;
+            width: 23%;
+            height: 8%;
+            top: 2%;
+            right: 1%;
+            color: white;
+            font-size: 20px;
+            text-align: right;
+            {#background-color: aqua;#}
+        }
+        #l1{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 13%;
+            left: 0;
+            {#background-color: antiquewhite;#}
+        }#l2{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 55%;
+            left: 0;
+            {#background-color: antiquewhite;#}
+        }#r1{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 13%;
+            right: 0;
+            {#background-color: antiquewhite;#}
+        }#r2{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 55%;
+            right: 0;
+            {#background-color: antiquewhite;#}
+        }#c1{
+            position: absolute;
+            width: 38%;
+            height: 33%;
+            top: 13%;
+            left: 31%;
+            {#background-color: antiquewhite;#}
+        }#c2{
+            position: absolute;
+            width: 38%;
+            height: 47%;
+            top: 48%;
+            left: 31%;
+            {#background-color: antiquewhite;#}
+        }
+    </style>
+</head>
+<body>
+<div id="title"><h1>母婴消费洞察</h1></div>
+<div id="time"></div>
+<div id="l1"></div>
+<div id="l2"></div>
+<div id="r1"></div>
+<div id="r2"></div>
+<div id="c1"></div>
+<div id="c2"></div>
+<script>
+    var get_l1 = echarts.init(document.getElementById('l1'),'dark');
+    var get_l2 = echarts.init(document.getElementById('l2'),'dark');
+    var get_r1 = echarts.init(document.getElementById('r1'),'dark');
+    var get_r2 = echarts.init(document.getElementById('r2'),'dark');
+    var get_c1 = echarts.init(document.getElementById('c1'),'dark');
+    var get_c2 = echarts.init(document.getElementById('c2'),'dark');
+
+    function get_time_data(){
+        $.ajax({
+            url:'/time',
+            type:'POST',
+            async:true,
+            success:function(data){
+                $('#time').html(data)
+            },error:function(){
+                alert("ajax传入数百")
+            }
+        })
+    }
+    function get_l1_data(){
+        $.ajax({
+            url:'/l1',
+            type:'POST',
+            async:true,
+            success:function(data){
+                get_l1.setOption({
+                    title:{
+                        text:'2010-1016中国人口出生率(%)',
+                    },
+                    tooltip:{
+                        show:true,
+                        formatter:'{b}年\t出生率:{c}'+'%'
+                    },
+                    xAxis:{
+                        type:'category',
+                        data:data.year
+                    },
+                    yAxis:{
+                        type:'value'
+                    },
+                    series:[{
+                        type:'line',
+                        data:data.lv,
+                        itemStyle:{
+                            normal:{
+                                label:{
+                                    show:true
+                                }
+                            }
+                        }
+                    }]
+
+                })
+            }
+        })
+    }
+    function get_l2_data(){
+        $.ajax({
+            url:'/l2',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_l2.setOption({
+                    title:{
+                        text:'母婴规模',
+                    },
+                    tooltip:{
+                        trigger:'axis',
+                        axisPointer:{
+                            type:'creoss',
+                            crossStyle:{
+                                color:'#999'
+                            }
+                        }
+                    },
+                    toolbox:{
+                        feature:{
+                            dataView:{show:true,readOnly:false},
+                            magicType:{show:true,type:['line','bar']},
+                            restore:{show:true},
+                            saveAsImage:{show:true},
+                        }
+                    },
+                    xAxis:{
+                        type:'category',
+                        data:data.day,
+                        axisPointer:{
+                            type:'shadow'
+                        }
+                    },
+                    yAxis:{
+                        type:'value'
+                    },
+                    series:[
+                        {
+                            type:'bar',
+                            data:data.sumT
+                        },
+                        {
+                            type:'line',
+                            data:data.sumT
+                        }
+                    ]
+                })
+            }
+        })
+    }
+    function get_r1_data(){
+        $.ajax({
+            url:'/r1',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_r1.setOption({
+                    title:{
+                        text:'2002~2015人口增长趋势',
+                    },
+                    tooltip:{trigger: 'axis'},
+                    xAxis:{
+                        type:'category',
+                        data:data.year
+                    },
+                    yAxis:{
+                        type:'value'
+                    },
+                    series:[
+                        {
+                            type:'line',
+                            smooth:true,
+                            data:data.lv
+                        }
+                    ]
+                })
+            }
+        })
+    }
+    function get_r2_data(){
+        $.ajax({
+            url:'/r2',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_r2.setOption({
+                    title:{
+                        text:'2002年到2014年人口'
+                    },
+                    tooltip:{
+                        trigger:'axis'
+                    },
+                    xAxis:{
+                        type:'category',
+                        splitLine:{show:true},
+                        data:data.year
+                    },
+                    yAxis:{
+                        type:'value'
+                    },
+                    series:[{
+                        name:'辅助',
+                        type:'bar',
+                        stack:'总量',
+                        itemStyle:{
+                            barBorderColor:'rgba(0,0,0,0)',
+                            color:'rgba(0,0,0,0)'
+                        },
+                        data:data.lvM
+                    },{
+                        name:'消费',
+                        type:'bar',
+                        stack:'总量',
+                        label:{
+                            show:true,
+                            position:'inside'
+                        },
+                        data:data.lv
+                    }]
+                })
+            }
+        })
+    }
+    function get_c1_data(){
+        $.ajax({
+            url:'/c1',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_c1.setOption({
+                    title:{
+                        text:'用户喜欢的商品TOP10'
+                    },
+                    tooltip:{
+                        trigger:'axis'
+                    },
+                    xAxis:{
+                        type: 'category',
+                        data:data.cat
+                    },
+                    yAxis:{
+                        type:'value',
+                        splitArea: {
+                        show: true
+                        }
+                    },
+                    series:[{
+                        type:'bar',
+                        data:data.sum,
+
+                    }],
+                })
+            }
+        })
+    }
+    function get_c2_data(){
+        $.ajax({
+            url:'/c2',
+            type:'post',
+            async:true,
+            success:function (data){
+                get_c2.setOption({
+                    title:{
+                        text:'2012-2015年每年占比(单位：亿万元)'
+                    },
+                    tooltip:{
+                        trigger:'item',
+                        formatter:'{b}年\n{c}亿万元'
+                    },
+                    series:[{
+                        type:'pie',
+                        radius:[20,170],
+                        center:['50%','50%'],
+                        soreType:'radius',
+                        itemStyle:{
+                            borderRadius:8
+                        },
+                        data:[
+                            {value:data.sal[0],name:data.year[0]},
+                            {value:data.sal[1],name:data.year[1]},
+                            {value:data.sal[2],name:data.year[2]},
+                            {value:data.sal[3],name:data.year[3]},
+                        ]
+                    }]
+                })
+            }
+        })
+    }
+    setInterval(get_time_data,1000);
+    get_l1_data();
+    get_l2_data();
+    get_r1_data();
+    get_r2_data();
+    get_c1_data();
+    get_c2_data();
+</script>
+</body>
+</html>

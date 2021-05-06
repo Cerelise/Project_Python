@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="../static/echarts.js"></script>
+  <script src="../static/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+<div id="main1" style="width:800px;height:600px;"></div>
+<div id="main2" style="width:800px;height:600px;"></div>
+<div id="main3" style="width:800px;height:600px;"></div>
+<div id="main4" style="width:800px;height:600px;"></div>
+<div id="main5" style="width:800px;height:600px;"></div>
+<div id="main6" style="width:800px;height:600px;"></div>
+<div id="main7" style="width:800px;height:600px;"></div>
+
+
+<script>
+  var main1 = echarts.init(document.querySelector('#main1'));
+  var main2 = echarts.init(document.querySelector('#main2'));
+  var main3 = echarts.init(document.querySelector('#main3'));
+  var main4 = echarts.init(document.querySelector('#main4'));
+  var main5 = echarts.init(document.querySelector('#main5'));
+  var main6 = echarts.init(document.querySelector('#main6'));
+  var main7 = echarts.init(document.querySelector('#main7'),'dark');
+
+  function my_echarts(){
+    $.ajax({
+      url:'/main',
+      type:'post',
+      async:true,
+      success:function(data){
+
+        main1.setOption({
+          title:{text:'员工在职',subtext:'与离职的比率',textStyle:{color:'red',fontWidth:'bolder'},left:'center'},
+          tooltip:{trigger:'axis'},
+          legend:{top:'5%',left:'right'},
+          series:[{
+            type:'pie',
+            radius:['40%','70%'],
+            avoidLabelOverlap:false,
+            label:{show:true,formatter:'{d}%'},
+
+            labelLine:{show:false,left:'center'},
+
+            data:[
+              {value:data.left[0],name:'在职'},
+              {value:data.left[1],name:'离职',selected:true},
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+          }]
+        })
+
+
+
+
+        main2.setOption({
+          title:{text:'员工满意度',subtext:'与公司在职时间关联',left:'center'},
+          tooltip:{trigger:'axis'},
+          grid:{containLabel:true},
+          xAxis:{type:'category',name:'在职时间（年）',data:data.spendTime},
+          yAxis:{type:'value',name:'平均满意度'},
+          visualMap:{
+            orient:'horizontal',
+            left:'center',
+            min:2,
+            max:10,
+            dimension:0,
+            inRange:{color:['#65B581', '#FFCE34', '#FD665F']}
+          },
+          series:[{
+              type:'bar',
+              data:data.spendNum,
+              label:{show:true,position:'top'}
+          }]
+        })
+
+
+
+        main3.setOption({
+           title:{text:'每个部门的离职员工数与在职员工数对比',left:'center'},
+           tooltip:{
+            trigger:'axis',
+            axisPointer:{type:'shadow'}
+           },
+           grid:{left:'3%',right:'4%',bottom:'3%',containLabel:true},
+           xAxis:{type:'value',name:'部门'},
+           legend:{data:['在职','离职'],left:'right',orient:'vertical'},
+           yAxis:{type:'category',data:data.salesColumns,name:'员工人数'},
+           series:[{
+              name:'离职',
+              type:'bar',
+              stack:'t',
+              label:{show:true},
+              emphasis:{focus:'series'},
+              data:data.lizhi
+           },{
+            name:'在职',
+            type:'bar',
+            stack:'t',
+            label:{show:true},
+            data:data.zaizhi
+           }]
+        })
+
+
+
+        main4.setOption({
+          title:{text:'公司部门的员工工资情况',left:'center'},
+          tooltip:{trigger:'axis'},
+          legend:{data:['high','low','medium'],left:'right',orient:'vertical'},
+          calculable:true,
+          xAxis:[{
+            type:'category',
+            data:data.salary,
+            name:'工作部分'
+          }],
+          yAxis:{
+            type:'value',
+            name:'工资情况'
+          },
+          series:[{
+            type:'bar',
+            name:'high',
+            data:data.high,
+            label:{show:true,position:'top'},
+
+          },{
+            type:'bar',
+            name:'low',
+            data:data.low,
+            label:{show:true,position:'top'},
+
+          },{
+            type:'bar',
+            name:'medium',
+            data:data.medium,
+            label:{show:true,position:'top'},
+
+          }]
+        })
+
+
+
+        main5.setOption({
+          title:{text:'员工薪资对离职的影响',left:'center'},
+          tooltip:{trigger:'axis'},
+          legend:{data:['在职','离职'],left:'right',orient:'vertical'},
+          xAxis:{type:'category',data:data.salaryName,name:'工资等级'},
+          yAxis:{type:'value',name:'离职人数'},
+          series:[{
+            name:'在职',
+            type:'bar',
+            data:data.zaizhiS,
+            label:{show:true,position:'top'},
+
+          },{
+            name:'离职',
+            type:'bar',
+            data:data.lizhiS,
+            label:{show:true,position:'top'}
+          }]
+
+        })
+
+
+        main6.setOption({
+          title:{text:'员工过去5年是否升职对离职的影响',left:'center'},
+          tooltip:{trigger:'axis'},
+          legend:{data:['在职','离职'],left:'right',orient:'vertical'},
+          xAxis:{type:'category',data:['没有升职','升过职'],name:'工资等级'},
+          yAxis:{type:'value',name:'离职人数'},
+          series:[{
+            name:'在职',
+            type:'bar',
+            data:[11128,300],
+            label:{show:true,position:'top'},
+
+          },{
+            name:'离职',
+            type:'bar',
+            data:[3552,19],
+            label:{show:true,position:'top'}
+          }]
+        })
+
+
+        main7.setOption({
+          title:{text:'员工的绩效评估对离职的影响',left:'center'},
+          tooltip:{trigger:'axis'},
+          legend:{data:['在职','离职'],left:'right',orient:'vertical'},
+          xAxis:{
+
+            axisLabel:{
+              inside:true,
+              textStyle:{color:'#fff'}
+            },
+            axisTick:{show:false},
+            axisLine:{show:false},
+            z:10,
+            type:'category',
+            data:data.level
+          },
+          yAxis:{
+            axisLine:{show:false},
+            axisTick:{show:false},
+            axisLabel:{textStyle:{color:'#999'}},type:'value'
+
+          },
+          dataZoom:[{type:'inside',start:80,end:100}],
+          series:[{
+            type:'bar',
+            name:'在职',
+                        showBackground: true,
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(
+                    0, 0, 0, 1,
+                    [
+                        {offset: 0, color: '#83bff6'},
+                        {offset: 0.5, color: '#188df0'},
+                        {offset: 1, color: '#188df0'}
+                    ]
+                )
+            },
+            emphasis: {
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#2378f7'},
+                            {offset: 0.7, color: '#2378f7'},
+                            {offset: 1, color: '#83bff6'}
+                        ]
+                    )
+                }
+            },
+            data: data.zaizhiL
+          },{
+            type:'bar',
+            name:'离职',
+            showBackground: true,
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(
+                    0, 0, 0, 1,
+                    [
+                        {offset: 0, color: '#83bff6'},
+                        {offset: 0.5, color: '#188df0'},
+                        {offset: 1, color: '#188df0'}
+                    ]
+                )
+            },
+            emphasis: {
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#2378f7'},
+                            {offset: 0.7, color: '#2378f7'},
+                            {offset: 1, color: '#83bff6'}
+                        ]
+                    )
+                }
+            },
+            data: data.lizhiL
+          }]
+        })
+
+
+      },
+      error:function(){
+        alert('ajax错误');
+      }
+    })
+  }
+
+  my_echarts();
+
+</script>
+</body>
+</html>

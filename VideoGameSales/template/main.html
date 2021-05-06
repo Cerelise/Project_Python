@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>电子游戏销售分析</title>
+    <script src="../static/echarts.js"></script>
+    <script src="../static/jquery-3.5.1.min.js"></script>
+    <style>
+        html{
+            background:url("../static/1139604.png");
+        }
+        #title{
+            position: absolute;
+            width: 50%;
+            height: 10%;
+            top: 0;
+            left: 25%;
+            {#background-color: aqua;#}
+            text-align: center;
+        }
+        #time{
+            position: absolute;
+            width: 23%;
+            height: 8%;
+            top: 2%;
+            right: 1%;
+            color: white;
+            font-size: 20px;
+            text-align: right;
+            {#background-color: aqua;#}
+        }
+        #l1{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 13%;
+            left: 0;
+            {#background-color: antiquewhite;#}
+        }#l2{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 55%;
+            left: 0;
+            {#background-color: antiquewhite;#}
+        }#r1{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 13%;
+            right: 0;
+            {#background-color: antiquewhite;#}
+        }#r2{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 55%;
+            right: 0;
+            {#background-color: antiquewhite;#}
+        }#c1{
+            position: absolute;
+            width: 38%;
+            height: 33%;
+            top: 13%;
+            left: 31%;
+            {#background-color: antiquewhite;#}
+        }#c2{
+            position: absolute;
+            width: 38%;
+            height: 47%;
+            top: 48%;
+            left: 31%;
+            {#background-color: antiquewhite;#}
+        }
+    </style>
+</head>
+<body>
+<div id="title"><h1>Video Game Sales电子游戏销售分析</h1></div>
+<div id="time"></div>
+<div id="l1"></div>
+<div id="l2"></div>
+<div id="c1"></div>
+<div id="c2"></div>
+<div id="r1"></div>
+<div id="r2"></div>
+<script>
+    var get_l1 = echarts.init(document.querySelector('#l1'),'dark');
+    var get_l2 = echarts.init(document.querySelector('#l2'),'dark');
+    var get_c1 = echarts.init(document.querySelector('#c1'),'dark');
+    var get_c2 = echarts.init(document.querySelector('#c2'),'dark');
+    var get_r1 = echarts.init(document.querySelector('#r1'),'dark');
+    var get_r2 = echarts.init(document.querySelector('#r2'),'dark');
+
+    function get_l1_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+
+                get_l1.setOption({
+                    title:{
+                        text:'全球游戏销量趋势',
+                        left:'center'
+                    },
+
+                    tooltip:{
+                        trigger:'axis'
+                    },
+                    xAxis:{
+                        name:'year',
+                        type:'category',
+                        data:data.year,
+
+                    },
+                    yAxis:{
+                        name:'总销售额（百万美元）',
+
+                        type:'value',
+
+                    },
+                    series:[{
+                        type:'line',
+                        showSymbol:false,
+                        data:data.number,
+                        markPoint:{
+                            data:[
+                                {value:'max',name:'最大值'}
+                            ]
+                        }
+                    }]
+                })
+            }
+        })
+    }
+
+    function get_l2_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_l2.setOption({
+                    title:{
+                        text:'不同地区游戏销售额发展趋势',
+                        left:'center',
+                        top:20
+                    },
+                    tooltip:{trigger:'axis'},
+                    xAxis:{
+                        type:'category',
+                        boundaryGap:false,
+                        data:data.year,
+                        name:'year'
+                    },
+                    legend:{
+                        data:['北美销售额','欧美销售额','日本销售额','其他地区销售额']
+                    },
+                    yAxis:{
+                        type:'value',
+                        name:'总销售额(百万美元)',
+                        left:'left',
+                        axisLabel:{
+                            formatter:'${value}W',
+                            axisPointer:{
+                                snap:true
+                            }
+                        }
+                    },
+                    series:[{
+                        name:'北美销售额',
+                        type:'line',
+                        smooth:true,
+                        data:data.na_sales,
+                        markPoint:{
+                            data:[
+                                {value:'max',name:'最大值'},
+                                {value:'min',name:'最小值'}
+                            ]
+                        },
+
+                    },{
+                        name:'欧美销售额',
+                        type:'line',
+                        smooth:true,
+                        data:data.eu_sales,
+                        markPoint:{
+                            data:[
+                                {value:'max',name:'最大值'},
+                                {value:'min',name:'最小值'}
+                            ]
+                        },
+                    },{
+                        name:'日本销售额',
+                        type:'line',
+                        smooth:true,
+                        data:data.jp_sales,
+                        markPoint:{
+                            data:[
+                                {value:'max',name:'最大值'},
+                                {value:'min',name:'最小值'}
+                            ]
+                        },
+                    },{
+                        name:'其他地区销售额',
+                        type:'line',
+                        smooth:true,
+                        data:data.other_sales,
+                        markPoint:{
+                            data:[
+                                {value:'max',name:'最大值'},
+                                {value:'min',name:'最小值'}
+                            ]
+                        },
+                    }]
+                })
+            }
+        })
+    }
+
+
+    function get_r1_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_r1.setOption({
+                    title:{
+                   text:'不同地区销售金额TOP10的平台',
+                   left:'center',
+                   top:20
+                },
+                tooltip:{
+                    trigger:'axis',
+                    axisPointer:{
+                        type:'shadow'
+                    }
+                },
+                legend:{
+                    data:['北美销售额','欧美销售额','日本销售额','其他地区销售额','总销售额']
+                },
+                xAxis:{
+                    type:'category',
+                    name:'平台名称',
+                    nameLocation:'center',
+                    nameTextStyle:{
+                        padding:[20,0,0,0]
+                    },
+                    data:data.platform
+                },
+                yAxis:{
+                    type:'value',
+                    name:'销售金额(百万美元)',
+                    nameLocation:'center',
+                    nameTextStyle:{
+                        padding:[20,20,20,0]
+                    },
+                },
+                series:[{
+                    name:'北美销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.na_sales_plat
+                },{
+                    name:'欧美销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.eu_sales_plat
+                },{
+                    name:'日本销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.jp_sales_plat
+                },{
+                    name:'其他地区销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.other_sales.plat
+                },{
+                    name:'总销售额',
+                    type:'line',
+                    emphasis:{focus:'series'},
+                    data:data.total_plat
+                }]
+                })
+
+            }
+        })
+    }
+
+    function get_r2_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_r2.setOption({
+                    title:{
+                   text:'不同地区销售金额TOP10的发行商',
+                   left:'center',
+                   top:20
+                },
+                tooltip:{
+                    trigger:'axis',
+                    axisPointer:{
+                        type:'shadow'
+                    }
+                },
+                legend:{
+                    data:['北美销售额','欧美销售额','日本销售额','其他地区销售额','总销售额']
+                },
+                xAxis:{
+                    type:'category',
+                    name:'平台名称',
+                    nameLocation:'center',
+                    nameTextStyle:{
+                        padding:[20,0,0,0]
+                    },
+                    data:data.platform
+                },
+                yAxis:{
+                    type:'value',
+                    name:'销售金额(百万美元)',
+                    nameLocation:'center',
+                    nameTextStyle:{
+                        padding:[20,20,20,0]
+                    },
+                },
+                series:[{
+                    name:'北美销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.na_sales_pub
+                },{
+                    name:'欧美销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.eu_sales_pub
+                },{
+                    name:'日本销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.jp_sales_pub
+                },{
+                    name:'其他地区销售额',
+                    type:'bar',
+                    stack:'test',
+                    emphasis:{focus:'series'},
+                    data:data.other_sales.pub
+                },{
+                    name:'总销售额',
+                    type:'line',
+                    emphasis:{focus:'series'},
+                    data:data.total_pub
+                }]
+                })
+
+            }
+        })
+    }
+
+
+    function get_c1_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_c1.setOption({
+                    tooltip:{
+                        show:true,
+                        formatter:'{a}<br/>{b}:{c}({d}%)'
+                    },
+                    legend:{
+                        data:['北美销售额','欧美销售额','日本销售额','其他地区销售额']
+                    },
+                    calculable:false,
+                    series:[{
+                        name:'北美销售额',
+                        type:'pie',
+                        center:['70%','30%'],
+                        radius:[20,50],
+                        data:[
+                            {value:data.na_sales_pub[0],name:data.gamename[0]},
+                            {value:data.na_sales_pub[1],name:data.gamename[1]},
+                            {value:data.na_sales_pub[2],name:data.gamename[2]},
+                            {value:data.na_sales_pub[3],name:data.gamename[3]},
+                            {value:data.na_sales_pub[4],name:data.gamename[4]},
+                        ],
+                        itemStyle:{
+                            labelLine:{
+                                length:2,
+                                show:false
+                            },
+                            label:{
+                                show:true,
+                                position:'inner',
+                                formatter:function(params){
+                                    return (params.percent-0).toFixed(0)+'%'
+                                },
+                                textStyle:{
+                                    fontSize:14
+                                }
+                            }
+                        }
+                    },{
+                        name:'欧美销售额',
+                        type:'pie',
+                        center:['30%','30%'],
+                        radius:[20,50],
+                        data:[
+                            {value:data.eu_sales_pub[0],name:data.gamename[0]},
+                            {value:data.eu_sales_pub[1],name:data.gamename[1]},
+                            {value:data.eu_sales_pub[2],name:data.gamename[2]},
+                            {value:data.eu_sales_pub[3],name:data.gamename[3]},
+                            {value:data.eu_sales_pub[4],name:data.gamename[4]},
+                        ],
+                        itemStyle:{
+                            labelLine:{
+                                length:2,
+                                show:false
+                            },
+                            label:{
+                                show:true,
+                                position:'inner',
+                                formatter:function(params){
+                                    return (params.percent-0).toFixed(0)+'%'
+                                },
+                                textStyle:{
+                                    fontSize:14
+                                }
+                            }
+                        }
+                    },{
+                        name:'日本销售额',
+                        type:'pie',
+                        center:['70%','70%'],
+                        radius:[20,50],
+                        data:[
+                            {value:data.jp_sales_pub[0],name:data.gamename[0]},
+                            {value:data.jp_sales_pub[1],name:data.gamename[1]},
+                            {value:data.jp_sales_pub[2],name:data.gamename[2]},
+                            {value:data.jp_sales_pub[3],name:data.gamename[3]},
+                            {value:data.jp_sales_pub[4],name:data.gamename[4]},
+                        ],
+                        itemStyle:{
+                            labelLine:{
+                                length:2,
+                                show:false
+                            },
+                            label:{
+                                show:true,
+                                position:'inner',
+                                formatter:function(params){
+                                    return (params.percent-0).toFixed(0)+'%'
+                                },
+                                textStyle:{
+                                    fontSize:14
+                                }
+                            }
+                        }
+                    },{
+                        name:'其他地区销售额',
+                        type:'pie',
+                        center:['20%','70%'],
+                        radius:[20,50],
+                        data:[
+                            {value:data.other_sales_pub[0],name:data.gamename[0]},
+                            {value:data.other_sales_pub[1],name:data.gamename[1]},
+                            {value:data.other_sales_pub[2],name:data.gamename[2]},
+                            {value:data.other_sales_pub[3],name:data.gamename[3]},
+                            {value:data.other_sales_pub[4],name:data.gamename[4]},
+                        ],
+                        itemStyle:{
+                            labelLine:{
+                                length:2,
+                                show:false
+                            },
+                            label:{
+                                show:true,
+                                position:'inner',
+                                formatter:function(params){
+                                    return (params.percent-0).toFixed(0)+'%'
+                                },
+                                textStyle:{
+                                    fontSize:14
+                                }
+                            }
+                        }
+                    }]
+                })
+            }
+        })
+    }
+
+    function get_c2_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_c2.setOption({
+                    title:{
+                        text:'全球游戏销售量发展趋势',
+                        left:'center',
+
+                    },
+                    tooltip:{trigger:'axis'},
+                    xAxis:{
+                        type:'category',
+                        data:data.year,
+                        name:'年份'
+                    },
+                    yAxis:{
+                        type:'value',
+                        name:'单位(百万美元)'
+                    },
+                    series:[{
+                        data:data.global_sales,
+                        type:'line',
+                        smooth:true
+                    }]
+                })
+            }
+        })
+    }
+
+    get_l1_data();
+    get_l2_data();
+    get_r1_data();
+    get_r2_data();
+    get_c1_data();
+    get_c2_data();
+</script>
+</body>
+</html>

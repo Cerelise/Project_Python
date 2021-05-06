@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>电商零售数据分析</title>
+    <script src="../static/echarts.js"></script>
+    <script src="../static/jquery-3.5.1.min.js"></script>
+    <style>
+         html{
+            background:url("../static/1068696.jpg");
+        }
+        #title{
+            position: absolute;
+            width: 50%;
+            height: 10%;
+            top: 0;
+            left: 25%;
+            {#background-color: aqua;#}
+            text-align: center;
+        }
+        #time{
+            position: absolute;
+            width: 23%;
+            height: 8%;
+            top: 2%;
+            right: 1%;
+            color: white;
+            font-size: 20px;
+            text-align: right;
+            {#background-color: aqua;#}
+        }
+        #l1{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 13%;
+            left: 0;
+            {#background-color: antiquewhite;#}
+        }#l2{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 55%;
+            left: 0;
+            {#background-color: antiquewhite;#}
+        }#r1{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 13%;
+            right: 0;
+            {#background-color: antiquewhite;#}
+        }#r2{
+            position: absolute;
+            width: 30%;
+            height: 40%;
+            top: 55%;
+            right: 0;
+            {#background-color: antiquewhite;#}
+        }#c1{
+            position: absolute;
+            width: 38%;
+            height: 33%;
+            top: 13%;
+            left: 31%;
+            {#background-color: antiquewhite;#}
+        }#c2{
+            position: absolute;
+            width: 38%;
+            height: 47%;
+            top: 48%;
+            left: 31%;
+            {#background-color: antiquewhite;#}
+        }
+    </style>
+</head>
+<body>
+<div id="title"></div>
+<div id="time"></div>
+<div id="l1"></div>
+<div id="l2"></div>
+<div id="c1"></div>
+<div id="c2"></div>
+<div id="r1"></div>
+<div id="r2"></div>
+<script>
+    var get_l1 = echarts.init(document.getElementById('l1'),'dark');
+    var get_l2 = echarts.init(document.getElementById('l2'),'dark');
+    var get_c1 = echarts.init(document.getElementById('c1'),'dark');
+    var get_c2 = echarts.init(document.getElementById('c2'),'dark');
+    var get_r1 = echarts.init(document.getElementById('r1'),'dark');
+    var get_r2 = echarts.init(document.getElementById('r2'),'dark');
+
+    function get_l1_data(){
+        $.ajax({
+            url:'l1',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_l1.setOption({
+                    title:{
+                        text:'2011年亚马逊全球消费前10地区'
+                    },
+                    tooltip:{
+                        trigger:'axis'
+                    },
+                    xAxis:{
+                        type:'category',
+                        data:data.name,
+                        axisLabel:{
+                            interval:0,
+                            rotate:40
+                        },
+                        name:'国家'
+                    },
+                    yAxis:{
+                        type:'value',
+                        name:'单位(万元)'
+                    },
+                    series:[{
+                        type:'bar',
+                        data:data.price
+                    }]
+
+                })
+            }
+        })
+    }
+    function get_l2_data(){
+        $.ajax({
+            url:'l2',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_l2.setOption({
+                    title:{
+                        text:'交易额前10的数据'
+                    },
+                    tooltip:{
+                        trigger:'axis',
+                        axisPointer:{
+                            type:'shadow'
+                        }
+                    },
+                    xAxis:{
+                        type:'category',
+                        boundaryGap:true,
+                        data:data.name,
+                        axisLabel:{
+                            interval:0,
+                            rotate:40
+                        }
+                    },
+                    grid:{
+                      bottom:90
+                    },
+                    yAxis:{
+                        type:'value'
+                    },
+                    series:[{
+                        type:'bar',
+                        data:data.price,
+                        large:true
+                    }]
+                })
+            }
+        })
+    }
+    function get_c2_data(){
+        $.ajax({
+            url:'/c2',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_c1.setOption({
+                    title:{
+                        text:'每月销量总额'
+                    },
+                    tooltip:{
+                        trigger:'axis'
+                    },
+                    xAxis:{
+                        type:'category',
+                        data:data.month,
+                        axisLabel:{
+                            interval:0,
+                            rotate:90
+                        }
+                    },
+                    yAxis:{
+                        type:'value'
+                    },
+                    series:[{
+                        type:'bar',
+                        data:data.sum
+                    }]
+                })
+            }
+        })
+    }
+    get_l1_data();
+    get_l2_data();
+    get_c2_data();
+</script>
+
+</body>
+</html>

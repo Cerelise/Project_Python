@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>京东</title>
+    <script src="../static/echarts.js"></script>
+    <script src="../static/jquery-3.5.1.min.js"></script>
+    <style>
+        html{
+            background:url("../static/1067009.jpg");
+        }
+        #title{
+            position:absolute;
+            width:50%;
+            height:10%;
+            top:0;
+            left:25%;
+            text-align:center;
+        }
+        #time{
+            position:absolute;
+            width:23%;
+            height:8%;
+            top:2%;
+            right:1%;
+            color:white;
+            font-size:20px;
+            text-align:right;
+        }
+        #l1{
+            position:absolute;
+            width:30%;
+            height:40%;
+            top:13%;
+            left:0
+        }
+        #l2{
+            position:absolute;
+            width:30%;
+            height:40%;
+            top:55%;
+            left:0;
+
+        }
+        #r1{
+            position:absolute;
+            width:30%;
+            height:40%;
+            top:13%;
+            right:0;
+        }
+        #r2{
+            position:absolute;
+            width:30%;
+            height:40%;
+            top:55%;
+            right:0;
+        }
+        #c1{
+            position:absolute;
+            width:38%;
+            height:33%;
+            top:13%;
+            left:31%
+        }
+        #c2{
+            position:absolute;
+            width:38%;
+            height:47%;
+            top:48%;
+            left:31%;
+        }
+    </style>
+</head>
+<body>
+<div id="title"><h1>京东店铺分布</h1></div>
+<div id="time"></div>
+<div id="l1"></div>
+<div id="l2"></div>
+<div id="c1"></div>
+<div id="c2"></div>
+<div id="r1"></div>
+<div id="r2"></div>
+<script>
+    var get_l1 = echarts.init(document.querySelector('#l1'),'dark');
+    var get_l2 = echarts.init(document.querySelector('#l2'),'dark');
+    var get_r1 = echarts.init(document.querySelector('#c1'),'dark');
+    var get_r2 = echarts.init(document.querySelector('#c2'),'dark');
+    var get_c1 = echarts.init(document.querySelector('#r1'),'dark');
+    var get_c2 = echarts.init(document.querySelector('#r2'),'dark');
+
+
+    function get_l1_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_l1.setOption({
+                    title:{
+                        text:'店铺数量'
+                    },
+                    grid:{containLabel:true},
+                    xAxis:{name:'店铺数量',type:'value'},
+                    yAxis:{type:'category',name:'店铺名称',data:data.group},
+                    tooltip:{trigger:'axis'},
+                    visualMap:{
+                        orient:'horizontal',
+                        left:'center',
+                        inRange:{
+                            color:['#65B581','#FFCE34']
+                        }
+                    },
+                    series:[
+                        {
+                            type:'bar',
+                            data:data.counts
+                        }
+                    ]
+                })
+            }
+        })
+    }
+
+    function get_l2_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_l2.setOption({
+                    title:{
+                        text:'数量总数占比'
+                    },
+                    legend:{
+                        top:'bottom'
+                    },
+                    toolbox:{
+                        show:true,
+                        feature:{
+                            mark:{show:true},
+                            dataView:{show:true,readOnly:false},
+                            restore:{show:true},
+                            saveAsImage:{show:true}
+                        }
+                    },
+                    tooltip:{
+                        trigger:'item',
+
+                    },
+                    series:[{
+                        type:'pie',
+                        radius:[50,150],
+                        center:['50%','50%'],
+                        roseType:'area',
+                        itemStyle:{
+                            borderRadius:8
+                        },
+                        data:[
+                            {value:data.counts[0],name:data.group[0]},
+                            {value:data.counts[1],name:data.group[1]},
+                            {value:data.counts[2],name:data.group[2]},
+                            {value:data.counts[3],name:data.group[3]},
+                        ]
+                    }]
+                })
+            }
+        })
+    }
+
+    function get_c1_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_c1.setOption({
+                    title:{
+                        text:'商品数量'
+                    },
+                    tooltip:{
+                        trigger:'axis',
+                        axisPoint:{
+                            type:'shadow'
+                        }
+                    },
+                    grid:{
+                        left:'3%',
+                        right:'4%',
+                        bottom:'3%',
+                        containLabel:true
+                    },
+                    xAxis:{
+                        type:'value',
+                        boundaryGap:[0,0.01],
+                        name:'产品数量'
+                    },
+                    yAxis:{
+                        type:'category',
+                        data:data.bType,
+                        name:'店铺名称'
+                    },
+                    series:[
+                        {
+                            type:'bar',
+                            data:data.number
+                        }
+                    ]
+                })
+            }
+        })
+    }
+    function get_c2_data(){
+        $.ajax({
+            url:'/text',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_c2.setOption({
+                    title:{text:'产品数量占比'},
+                    tooltip:{
+                        trigger:'item'
+                    },
+                    legend:{
+                        top:'5%',
+                        left:'center'
+                    },
+                    series:[
+                        {
+                            type:'pie',
+                            radius:['40%','70%'],
+                            avoidLabelOverlap:false,
+                            label:{
+                                show:false,
+                                position:'center'
+                            },
+                            emphasis:{
+                                label:{
+                                    show:true,
+                                    fontSize:'40',
+                                    fontWeight:'bold'
+                                }
+                            },
+                            labelLine:{
+                                show:false
+                            },
+                            data:[
+                                {value:data.number[0],name:data.bType[0]},
+                                {value:data.number[1],name:data.bType[1]},
+                                {value:data.number[2],name:data.bType[2]},
+                                {value:data.number[3],name:data.bType[3]},
+                            ]
+                        }
+                    ]
+                })
+            }
+        })
+    }
+
+    function get_r2_data(){
+        $.ajax({
+            url:'/price',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_r2.setOption({
+                    title:{
+                        text:'不同阶段商品价格对比',
+                        left:'center'
+                    },
+                    legend:{
+                        left:'center',
+                        top:'bottom',
+                        data:data.price
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            mark: {show: true},
+                            dataView: {show: true, readOnly: false},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b} : {c} ({d}%)'
+                    },
+                    series:[{
+                        type:'pie',
+                        radius:'55%',
+                        data:[
+                            {value:data.number[0],name:data.price[0]},
+                            {value:data.number[1],name:data.price[1]},
+                            {value:data.number[2],name:data.price[2]},
+                            {value:data.number[3],name:data.price[3]},
+                            {value:data.number[4],name:data.price[4]},
+                            {value:data.number[5],name:data.price[5]},
+                            {value:data.number[6],name:data.price[6]},
+                            {value:data.number[7],name:data.price[7]},
+                            {value:data.number[8],name:data.price[8]},
+                        ],
+                        roseType:'radius',
+                        label:{
+                            color:'rgba(255, 255, 255, 0.3)'
+                        },
+                        labelLine: {
+                            lineStyle: {
+                                color: 'rgba(255, 255, 255, 0.3)'
+                            },
+                            smooth: 0.2,
+                            length: 10,
+                            length2: 20
+                        },
+                        itemStyle: {
+                            color: '#c23531',
+                            shadowBlur: 200,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        },
+                    }]
+                })
+            }
+        })
+    }
+
+    function get_r1_data(){
+        $.ajax({
+            url:'/price',
+            type:'post',
+            async:true,
+            success:function(data){
+                get_r1.setOption({
+                    title:{
+                        text:'雷达图练习',
+                        left:'center'
+                    },
+                    radar:{
+                        indicator:[
+                            {name:data.Bprice[0],max:0.11},
+                            {name:data.Bprice[1],max:0.07},
+                            {name:data.Bprice[2],max:0.02},
+                            {name:data.Bprice[3],max:0.005},
+                        ],
+                        shape: 'circle',
+                            splitNumber: 5,
+                            name: {
+                                textStyle: {
+                                    color: 'rgb(238, 197, 102)'
+                                }
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: [
+                                        'rgba(238, 197, 102, 0.1)', 'rgba(238, 197, 102, 0.2)',
+                                        'rgba(238, 197, 102, 0.4)', 'rgba(238, 197, 102, 0.6)',
+                                        'rgba(238, 197, 102, 0.8)', 'rgba(238, 197, 102, 1)'
+                                    ].reverse()
+                                }
+                            },
+                            splitArea: {
+                                show: false
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: 'rgba(238, 197, 102, 0.5)'
+                                }
+                            }
+                        },
+                        series:[{
+                           name:'占比情况',
+                           type:'radar',
+                            symbol:'none',
+                            data:data.Bnumber
+                        }]
+                    }
+                )
+            }
+        })
+    }
+
+    get_l1_data();
+    get_l2_data();
+    get_c1_data();
+    get_c2_data();
+    get_r2_data();
+    get_r1_data();
+</script>
+</body>
+</html>
